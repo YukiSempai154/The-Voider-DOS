@@ -2,6 +2,7 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![Status: In Development](https://img.shields.io/badge/Status-In_Development-yellow)
+![Progress: 5%](https://img.shields.io/badge/progress-5%25-red)
 
 Добро пожаловать в проект **The Voider DOS** — игру с бесконечной прокачкой, открытым миром и философией абсолютной свободы модификации. Это не просто игра; это конструктор для сообщества, где каждый может стать соавтором её эволюции.
 
