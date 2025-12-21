@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-*
+
+# Game files
+saves/
+*.log
+*.pid
+game_data.json
+game_save.json
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build
+*.exe
+*.msi
+*.dmg
+dist/
+build/
+
+# PyInstaller
+*.spec
+
+# Project specific
+debug.log
+temp/
+cache/
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# mypy
+.mypy_cache/
