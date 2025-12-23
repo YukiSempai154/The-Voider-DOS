@@ -13,7 +13,7 @@ from config import GAME_NAME, VERSION, BUILD_TYPE, AUTHOR, VERSION_STRING, UI
 
 # Импортируем модули интерфейса
 from .console_ui import ConsoleUI, console
-from .color_scheme import ColorSchemeManager, color_manager
+from voider_dos.ui.color_scheme import ColorSchemeManager, color_manager
 
 
 class MainMenu:

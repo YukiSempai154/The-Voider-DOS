@@ -4,6 +4,7 @@
 
 from colorama import Fore, Back, Style, init
 import sys
+import os
 
 # Инициализация colorama
 init(autoreset=True)
