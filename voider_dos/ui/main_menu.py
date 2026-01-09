@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 from config import GAME_NAME, VERSION, BUILD_TYPE, AUTHOR, VERSION_STRING, UI
 
 # Импортируем модули интерфейса
-from .console_ui import ConsoleUI, console
+from voider_dos.ui.console_ui import ConsoleUI, console
 from voider_dos.ui.color_scheme import ColorSchemeManager, color_manager
 
 

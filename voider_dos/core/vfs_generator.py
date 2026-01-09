@@ -11,11 +11,11 @@ import sys
 # Добавляем путь для импорта config.py из корня проекта
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 from config import GENERATION, CIPHERS, FILE_TYPES, DEFAULT_DATA
-from .cipher_system import CipherSystem
+from voider_dos.ui.cipher_system import CipherSystem
 
 # Для случая, если cipher_system.py еще не создан
 try:
-    from .cipher_system import CipherSystem
+    from voider_dos.ui.cipher_system import CipherSystem
 except ImportError:
     # Заглушка для тестирования
     class CipherSystem:

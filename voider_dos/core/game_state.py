@@ -367,27 +367,5 @@ class GameState:
 
 # Тестирование класса (если файл запущен напрямую)
 if __name__ == "__main__":
-    print("Тестирование класса GameState...")
-    
-    # Создаем экземпляр
-    state = GameState()
-    
-    # Тестируем методы
-    state.start_new_session(seed=12345)
-    
-    # Добавляем очки и статистику
-    state.record_decryption()
-    state.record_file_opened(is_easter_egg=True)
-    state.record_file_opened()
-    
-    # Сохраняем
-    state.save()
-    
-    # Загружаем
-    state2 = GameState()
-    state2.load()
-    
-    # Показываем статистику
-    state2.show_stats()
-    
-    print("\nТестирование завершено!")
+    print("Этот файл не должен запускаться напрямую!")
+    print("Запустите main.py для начала игры.")

@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+
+import sys
+import os
+
+# Добавляем текущую папку в путь Python
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
+
 """
 THE-VOIDER-DOS - Консольная игра с процедурной генерацией файловой системы
 Автор: Prunt (Yuki_Sempai)
