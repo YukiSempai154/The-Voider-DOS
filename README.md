@@ -1,8 +1,8 @@
 # The Voider DOS: Endless Void
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-![Status: Issue](https://img.shields.io/badge/Status-Coding_Issue-red)
-![Progress: Paused](https://img.shields.io/badge/Progress-Paused-lightgrey)
+![Status: Active](https://img.shields.io/badge/Status-In_Development-orange)
+![Progress: Rewriting](https://img.shields.io/badge/Progress-Clean_Slate_Rewrite-brightgreen)
 
 Добро пожаловать в проект **The Voider DOS** — игру с бесконечной прокачкой, открытым миром и философией абсолютной свободы модификации. Это не просто игра; это конструктор для сообщества, где каждый может стать соавтором её эволюции.
 
