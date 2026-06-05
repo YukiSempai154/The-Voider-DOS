@@ -5,6 +5,8 @@ import random
 from colorama import Fore, Back, Style, init
 
 import world_gen
+# Импортируем нашу языковую базу из отдельного файла
+from localization import LANG_DATA
 
 init(autoreset=True)
 
@@ -14,8 +16,10 @@ RED = Fore.RED + Style.BRIGHT
 WHITE = Fore.WHITE + Style.BRIGHT
 YELLOW = Fore.YELLOW + Style.BRIGHT
 
+# Глобальный переключатель языка по умолчанию
+CURRENT_LANG = "RU"
+
 def clear_screen():
-    os.path.dirname
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
@@ -270,20 +274,24 @@ class MainMenu:
         self.author = "Prunt (Yuki_Sempai)"
 
     def show(self):
+        global CURRENT_LANG
         while True:
             clear_screen()
+            t = LANG_DATA[CURRENT_LANG]
+            
             print(GREEN + "════════════════════════════════════════════════════")
-            print(GREEN + "               THE VOIDER DOS SYSTEM                ")
+            print(GREEN + t["menu_title"])
             print(GREEN + "════════════════════════════════════════════════════")
-            print(GREEN + f" [ Сборка: {self.version} ]          [ Автор: {self.author} ]")
+            print(GREEN + f" [{t['menu_build']}: {self.version} ]          [ {t['menu_author']}: {self.author} ]")
             print(GREEN + "════════════════════════════════════════════════════")
-            print(GREEN + "  1. ЗАПУСТИТЬ СИМУЛЯЦИЮ ТЕРМИНАЛА")
-            print(GREEN + "  2. СИСТЕМНАЯ СПРАВКА (СПИСОК КОМАНД)")
-            print(GREEN + "  3. ЧТО К ЧЕМУ? (ВВЕДЕНИЕ ДЛЯ НОВИЧКА)")
-            print(GREEN + "  4. АВАРИЙНЫЙ ВЫХОД")
+            print(GREEN + t["m_launch"])
+            print(GREEN + t["m_help"])
+            print(GREEN + t["m_intro"])
+            print(YELLOW + t["m_lang"])
+            print(GREEN + t["m_exit"])
             print(GREEN + "════════════════════════════════════════════════════")
             
-            choice = input(GREEN + "\nВыбирете сектор загрузки > ").strip()
+            choice = input(GREEN + t["m_prompt"]).strip()
 
             if choice == "1":
                 session = GameSession()
@@ -291,72 +299,79 @@ class MainMenu:
             elif choice == "2":
                 self.show_help()
             elif choice == "3":
-                self.show_intro()  # Вызов нового подраздела
+                self.show_intro()
+            elif choice == "0":
+                CURRENT_LANG = "EN" if CURRENT_LANG == "RU" else "RU"
             elif choice == "4":
-                print(RED + "\nОтключение питания terminal. Система мертва...")
+                print(RED + t["m_exit_msg"])
                 sys.exit(0)
 
     def show_help(self):
         clear_screen()
-        print(CYAN + "=== ИНФОРМАЦИОННЫЙ БУФЕР (КОМАНДЫ) ===")
-        print(WHITE + "Вы подключились к терминалу VOIDER-DOS.\n")
-        print(YELLOW + "Доступные сейчас команды в режиме терминала:")
-        print(WHITE + "  dir       - Просмотр файлов и папок в текущей директории")
-        print(WHITE + "  cd <имя>  - Перейти внутрь выбранной папки")
-        print(WHITE + "  cd ..     - Вернуться на один уровень назад (выше)")
-        print(WHITE + "  type <ф>  - Прочесть текстовый файл (например: type note.txt)")
-        print(WHITE + "  clear     - Очистить экран от мусора")
-        print(WHITE + "  exit      - Бросить терминал и вернуться в главное меню\n")
-        print(RED + "=== ВНИМАНИЕ: СТОП-КРАН ===")
-        print(RED + "  В сочетании клавиш Ctrl+C зашит системный аварийный клапан.")
-        print(RED + "  Используй это, если система сойдет с ума или будет взломана...")
-        input(GREEN + "\nНажмите Enter для возврата в меню...")
+        t = LANG_DATA[CURRENT_LANG]
+        
+        print(CYAN + t["h_title"])
+        print(WHITE + t["h_welcome"])
+        print(YELLOW + t["h_avail"])
+        print(WHITE + t["h_dir"])
+        print(WHITE + t["h_cd"])
+        print(WHITE + t["h_cd2"])
+        print(WHITE + t["h_type"])
+        print(WHITE + t["h_clear"])
+        print(WHITE + t["h_exit"])
+        print(RED + t["h_warn"])
+        print(RED + t["h_stop"])
+        print(RED + t["h_stop2"])
+        input(GREEN + t["h_back"])
 
     def show_intro(self):
         clear_screen()
+        t = LANG_DATA[CURRENT_LANG]
+        
+        def p(text_key):
+            raw_text = t[text_key]
+            print(raw_text.format(RED=RED, GREEN=GREEN, CYAN=CYAN, WHITE=WHITE, YELLOW=YELLOW))
+
         print(CYAN + "════════════════════════════════════════════════════════════════════════════════")
-        print(CYAN + "                 ИНСТРУКТАЖ ПО ВЫЖИВАНИЮ В ПУСТОТЕ (THE VOIDER)                 ")
+        print(CYAN + t["i_title"])
         print(CYAN + "════════════════════════════════════════════════════════════════════════════════")
         print()
-        print(WHITE + " Привет, оператор. Если ты никогда не видел текстовых игр — без паники.")
-        print(WHITE + " Перед тобой не просто черный экран, это " + RED + "VOIDER-DOS" + WHITE + " — симулятор старого терминала.")
-        print(WHITE + " Ты играешь за исследователя-тестировщика, который пробился в заброшенную")
-        print(WHITE + " цифровую Пустоту. Твоя клавиатура — твое единственное оружие.")
+        p("i_p1")
+        p("i_p2")
+        p("i_p3")
+        p("i_p4")
         print()
-        print(YELLOW + " 📌 В ЧЕМ ТВОЯ ГЛАВНАЯ ЗАДАЧА?")
-        print(WHITE + " Где-то в глубине сотен процедурно сгенерированных папок и секторов ")
-        print(WHITE + " спрятаны " + CYAN + "3 ЧАСТИ ДНЕВНИКА НАБЛЮДАТЕЛЯ" + WHITE + ". Твоя цель — найти их все и выжить.")
-        print(WHITE + " Но помни: мир создается заново при каждом запуске. Пути всегда разные.")
+        print(YELLOW + t["i_task_t"])
+        p("i_task_1")
+        p("i_task_2")
+        p("i_task_3")
         print()
-        print(YELLOW + " 🕹️ ЧТО ДЕЛАТЬ И КАК ИГРАТЬ?")
-        print(WHITE + " 1. После старта игры ты окажешься в корне системы " + GREEN + "VOID:\\>")
-        print(WHITE + " 2. Вводи " + GREEN + "dir" + WHITE + " (или " + GREEN + "ls" + WHITE + "), чтобы увидеть, какие папки и файлы есть вокруг.")
-        print(WHITE + " 3. Видишь папку? Пиши " + GREEN + "cd ИМЯ_ПАПКИ" + WHITE + ", чтобы зайти в нее. Иди глубже (до 4 уровней).")
-        print(WHITE + " 4. Хочешь назад? Пиши " + GREEN + "cd .." + WHITE + " — это поднимет тебя на уровень выше.")
-        print(WHITE + " 5. Нашел файл? Пиши " + GREEN + "type ИМЯ_ФАЙЛА.txt" + WHITE + ", чтобы прочесть его. Там может быть лор!")
+        print(YELLOW + t["i_play_t"])
+        p("i_play_1")
+        p("i_play_2")
+        p("i_play_3")
+        p("i_play_4")
+        p("i_play_5")
         print()
-        print(RED + " ⚠️ ЧТО ТУТ ДА КАК И ПОЧЕМУ? (ОПАСНОСТИ)")
-        print(WHITE + " Система нестабильна. Создатель Prunt оставил скрытые ловушки.")
-        print(WHITE + " * Если экран начнет безумно спамить символами — тебя взламывают.")
-        print(WHITE + " * Если ты провалишься на секретный уровень [-1] — пути назад не будет.")
-        print(WHITE + " В любой непонятной ситуации, или если игра пытается тебя сожрать,")
-        print(WHITE + " используй " + RED + "СТОП-КРАН (нажми сочетание клавиш Ctrl+C)" + WHITE + ". Это твое спасение.")
+        print(RED + t["i_warn_t"])
+        p("i_warn_1")
+        p("i_warn_2")
+        p("i_warn_3")
+        p("i_warn_4")
+        p("i_warn_5")
         print()
         print(CYAN + "════════════════════════════════════════════════════════════════════════════════")
-        input(GREEN + "\nПрочитано. Нажми Enter, чтобы вернуться в главное меню и начать охоту...")
+        input(GREEN + t["i_back"])
 
 
 if __name__ == "__main__":
     import subprocess
     
-    # Тот самый рабочий флаг для изоляции в чистом окне python.exe
     CREATE_NEW_CONSOLE = 0x00000010
     
-    # Проверяем, запущен ли скрипт из-под VS Code
     if os.environ.get('TERM_PROGRAM') == 'vscode' and '--detached' not in sys.argv:
         script_path = os.path.abspath(__file__)
         
-        # Перенаправляем в родное независимое окно
         subprocess.Popen([sys.executable, script_path, '--detached'], creationflags=CREATE_NEW_CONSOLE)
         
         print(GREEN + "\n[LAUNCHER]: Симуляция VOIDER-DOS успешно перенаправлена в отдельное окно.")
