@@ -5,7 +5,6 @@ import random
 from colorama import Fore, Back, Style, init
 
 import world_gen
-# Импортируем нашу языковую базу из отдельного файла
 from localization import LANG_DATA
 
 init(autoreset=True)
@@ -16,58 +15,47 @@ RED = Fore.RED + Style.BRIGHT
 WHITE = Fore.WHITE + Style.BRIGHT
 YELLOW = Fore.YELLOW + Style.BRIGHT
 
-# Глобальный переключатель языка по умолчанию
 CURRENT_LANG = "RU"
 
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-
 def show_alpha_disclaimer():
-    """Мигающее предупреждение перед запуском."""
-    text = (
-        "Приветствую тебя, дорогой тестировщик! Я Prunt. Единственный разработчик этого проекта.\n"
-        "Прямо сейчас ты пробуешь мое детище в Alpha тестировании, и поэтому считаю должным тебя предупредить.\n"
-        "Тут могут быть баги, гличи или вовсе какие-либо недоработки. Прошу тебя понять и простить\n"
-        "мою грешную душу, поскольку в одно рыло пилить все это достаточно сложно, имея скудные познания в Python.\n\n"
-        "Нажимая [y], ты соглашаешься с тем, что ты это прочитал и не имеешь ко мне претензий."
-    )
-
+    t = LANG_DATA[CURRENT_LANG]
     for _ in range(10):
         clear_screen()
         print(Back.RED + Fore.WHITE + Style.BRIGHT + " " * 80)
-        print(Back.RED + Fore.WHITE + Style.BRIGHT + "ВНИМАНИЕ! КРИТИЧЕСКИЙ БУФЕР ТЕСТИРОВАНИЯ".center(80))
+        print(Back.RED + Fore.WHITE + Style.BRIGHT + t["ad_header"].center(80))
         print(Back.RED + Fore.WHITE + Style.BRIGHT + " " * 80)
         time.sleep(0.15)
         clear_screen()
         print(Back.WHITE + Fore.RED + Style.BRIGHT + " " * 80)
-        print(Back.WHITE + Fore.RED + Style.BRIGHT + "ВНИМАНИЕ! КРИТИЧЕСКИЙ БУФЕР ТЕСТИРОВАНИЯ".center(80))
+        print(Back.WHITE + Fore.RED + Style.BRIGHT + t["ad_header"].center(80))
         print(Back.WHITE + Fore.RED + Style.BRIGHT + " " * 80)
         time.sleep(0.15)
 
     clear_screen()
     print(Back.RED + Fore.WHITE + Style.BRIGHT + "════════════════════════════════════════════════════════════════════════════════")
-    print(Back.RED + Fore.WHITE + Style.BRIGHT + "                                   ВНИМАНИЕ!                                    ")
+    print(Back.RED + Fore.WHITE + Style.BRIGHT + t["ad_header"].center(80))
     print(Back.RED + Fore.WHITE + Style.BRIGHT + "════════════════════════════════════════════════════════════════════════════════")
     print()
-    print(WHITE + text)
+    print(WHITE + t["ad_body"])
     print("\n" + Back.RED + Fore.WHITE + Style.BRIGHT + "════════════════════════════════════════════════════════════════════════════════")
     print()
 
     while True:
-        choice = input(YELLOW + "Принять условия тестирования? [y - Продолжить / n - Выход] > ").strip().lower()
+        choice = input(YELLOW + t["ad_prompt"]).strip().lower()
         if choice == 'y':
             clear_screen()
-            print(GREEN + "Доступ разрешен. Загрузка главного меню...")
+            print(GREEN + t["ad_loading"])
             time.sleep(1)
             break
         elif choice == 'n':
-            print(RED + "\n[SYSTEM]: Отказ от условий альфа-теста. Завершение процесса...")
+            print(RED + t["ad_exit"])
             time.sleep(1)
             sys.exit(0)
         else:
-            print(RED + "Ошибка: Введите 'y' для согласия или 'n' для отмены.")
-
+            print(RED + t["ad_err"])
 
 class MockVirtualFS:
     def __init__(self):
@@ -76,28 +64,28 @@ class MockVirtualFS:
         self.is_corrupted = False
 
     def list_dir(self):
+        t = LANG_DATA[CURRENT_LANG]
         data = self.tree.get(self.current_path, {"dirs": [], "files": []})
-        print(CYAN + f"\n Содержимое директории {self.current_path}:")
+        print(CYAN + t["vfs_dir_header"].format(path=self.current_path))
         print(CYAN + " ════════════════════════════════════════")
         for d in data["dirs"]:
             print(f"   <DIR>    {d}")
         for f in data["files"]:
             print(f"   FILE     {f}")
         if not data["dirs"] and not data["files"]:
-            print("   [Директория пуста]")
+            print(f"   {t['vfs_dir_empty']}")
         print()
 
     def change_dir(self, target):
+        t = LANG_DATA[CURRENT_LANG]
         if self.is_corrupted:
             self.current_path = "VOID:\\-1"
-            print(RED + "\n[SYSTEM_ERR]: КОРНЕВАЯ ДИРЕКТОРИЯ ПОВРЕЖДЕНА. ВЫХОД ЗАБЛОКИРОВАН.")
-            print(RED + "[SYSTEM_ERR]: СЕКТОР ПЕРЕНАПРАВЛЕН В УРОВЕНЬ [-1].\n")
+            print(RED + t["vfs_err_corrupted"])
             return
 
         if target == "..":
             if self.current_path == "VOID:\\":
-                print(YELLOW + "\n[SYSTEM]: Я конечно понимаю, что ты любишь залезать \"поглубже\".")
-                print(YELLOW + "[SYSTEM]: Но так глубоко даже Бразерс не забирался :D\n")
+                print(YELLOW + t["vfs_err_cd"])
                 return
             parts = self.current_path.rstrip("\\").split("\\")
             self.current_path = "\\".join(parts[:-1])
@@ -119,9 +107,10 @@ class MockVirtualFS:
             else:
                 self.current_path += "\\" + matched_dir
         else:
-            print(RED + f"Ошибка: Не удается найти указанный путь: '{target}'")
+            print(RED + t["vfs_err_path"].format(target=target))
 
     def read_file(self, filename):
+        t = LANG_DATA[CURRENT_LANG]
         current_data = self.tree.get(self.current_path, {"files": []})
         matched_file = next((f for f in current_data["files"] if f.lower() == filename.lower()), None)
         if matched_file:
@@ -129,7 +118,7 @@ class MockVirtualFS:
             if not full_file_path.endswith("\\"):
                 full_file_path += "\\"
             full_file_path += matched_file
-            return self.files_content.get(full_file_path, "Ошибка: Файл пуст.")
+            return self.files_content.get(full_file_path, t["vfs_file_err"])
         return None
 
 
@@ -139,10 +128,10 @@ class GameSession:
         self.dev_mode = False
 
     def start(self):
+        t = LANG_DATA[CURRENT_LANG]
         clear_screen()
         print(GREEN + "====================================================")
-        print(GREEN + "  ЯДРО VOIDER-DOS АКТИВИРОВАНО. СЕЙЧАС ВЫ В ПУСТОТЕ. ")
-        print(GREEN + "  Введите 'exit' для возврата в главное меню.       ")
+        print(GREEN + t["gs_banner"])
         print(GREEN + "====================================================\n")
 
         while True:
@@ -152,18 +141,15 @@ class GameSession:
             try:
                 user_input = input(prompt_color + f"{prefix}{self.vfs.current_path}> ").strip()
             except KeyboardInterrupt:
-                print(RED + "\n\n[CRITICAL]: ОБНАРУЖЕН СИГНАЛ СТОП-КРАНА (Ctrl+C).")
-                print(RED + "[CRITICAL]: Аварийное тушение процессов...")
+                print(RED + t["gs_stop"])
                 time.sleep(1.5)
                 sys.exit(0)
 
             if not user_input:
                 continue
 
-            # Проверка линуксовой пасхалки на смерть системы (работает только в DEV-MODE)
             if self.dev_mode and user_input.lower() == "sudo rm -rf \ --no-preserve-root":
-                print(RED + "\n[PASSHALKA]: Инициализировано полное стирание ядра Linux-style...")
-                print(RED + "[SYSTEM]: Корневой сектор уничтожен. Доигрался? Тасскилл процесса...")
+                print(RED + t["gs_sudo_msg"])
                 time.sleep(2)
                 sys.exit(0)
 
@@ -183,60 +169,48 @@ class GameSession:
                 else:
                     self.vfs.change_dir(args)
             
-            # --- Вход в панель разработчика ---
             elif command in ["sudo", "dev"]:
-                password = input(YELLOW + "Введите мастер-ключ создателя > ").strip()
+                password = input(YELLOW + t["gs_dev_auth"]).strip()
                 if password == "PreAlphaPrunt2026":
                     self.dev_mode = True
-                    print(GREEN + "\n[ACCESS]: Режим Создателя активирован. Защита ядра отключена.")
-                    print(YELLOW + "Введите 'admin-help' для вызова отладочных директив.\n")
+                    print(GREEN + t["gs_dev_access"])
                 else:
-                    print(RED + "[DENIED]: Ошибка аутентификации. Доступ заблокирован.")
+                    print(RED + t["gs_dev_denied"])
 
-            # --- Команды DEV-MODE ---
             elif self.dev_mode and command == "admin-help":
-                print(YELLOW + "\n=== ПАНЕЛЬ ОТЛАДКИ РАЗРАБОТЧИКА ===")
-                print(WHITE + "  OVERFLOW.bat --rn                 - Принудительный вызов спам-файла")
-                print(WHITE + "  ROOT_CRASH.sys --rn               - Принудительный вызов уровня -1")
-                print(WHITE + "  reroads                           - Перегенерация мира с ТЕКУЩЕЙ позиции (Может вызвать баги!)")
-                print(WHITE + "  reroads \\\\                        - Перегенерация мира с выбросом на старт текущей сессии")
-                print(WHITE + "  sudo rm -rf \\ --no-preserve-root  - Пасхалка :3 (Мгновенный тасскилл игры)")
-                print(WHITE + "  goodbye                           - Выход из режима DEV-MODE\n")
+                print(YELLOW + t["gs_dev_help_title"])
+                print(WHITE + t["gs_dev_help_list"])
 
             elif self.dev_mode and command == "overflow.bat" and args.lower() == "--rn":
-                print(RED + "\n[DEV-TRIGGER]: Искусственный вызов переполнения буфера...")
+                print(RED + t["gs_overflow_trigger"])
                 time.sleep(1)
                 try:
                     glitch_chars = ["$", "%", "§", "@", "&", "#", "9", "0", "?", "!", "VOID"]
                     while True:
                         print(random.choice(glitch_chars), end=" ", flush=True)
                 except KeyboardInterrupt:
-                    print(YELLOW + "\n\n[SYSTEM]: Стоп-кран удержал ядро. Поток очищен.")
+                    print(YELLOW + t["vfs_stop_kran"])
                     continue
 
             elif self.dev_mode and command == "root_crash.sys" and args.lower() == "--rn":
-                print(RED + "\n[DEV-TRIGGER]: Принудительное падение ядра...")
+                print(RED + t["gs_root_crash"])
                 self.vfs.is_corrupted = True
                 self.vfs.current_path = "VOID:\\-1"
-                print(RED + "Вы провалились ниже корневого уровня. Корнем стал сектор [-1].")
 
             elif self.dev_mode and command == "reroads":
-                # Обрабатываем варианты "reroads \" и "reroads \\"
                 if args in ["\\", "\\\\"]:
                     self.vfs.tree, self.vfs.files_content = world_gen.generate_huge_void()
                     self.vfs.current_path = "VOID:\\"
                     self.vfs.is_corrupted = False
-                    print(GREEN + "\n[DEV]: Мир перегенерирован. Вы выброшены на стартовую позицию сессии.\n")
+                    print(GREEN + t["gs_reroads_msg"])
                 else:
                     self.vfs.tree, self.vfs.files_content = world_gen.generate_huge_void()
-                    print(YELLOW + "\n[DEV]: Директории перегенерированы на лету с текущей позиции.")
-                    print(YELLOW + "Внимание: Если текущего пути нет в новом древе, папка будет казаться пустой!\n")
+                    print(YELLOW + t["gs_reroads_local"])
 
             elif self.dev_mode and command == "goodbye":
                 self.dev_mode = False
-                print(GREEN + "\n[DEV]: Режим отладки отключен. Скрытие терминала разработчика.\n")
+                print(GREEN + t["gs_dev_exit"])
 
-            # --- Обычное чтение файлов ---
             elif command == "type":
                 if not args:
                     print(YELLOW + "Использование: type <имя_файла>")
@@ -244,28 +218,27 @@ class GameSession:
                     content = self.vfs.read_file(args)
                     if content is not None:
                         if content == "__TRIGGER_SPAM_GLITCH__":
-                            print(RED + "\n[WARNING]: КРИТИЧЕСКАЯ УТЕЧКА ПАМЯТИ!")
+                            print(RED + t["vfs_overflow_warn"])
                             time.sleep(1)
                             try:
                                 glitch_chars = ["$", "%", "§", "@", "&", "#", "9", "0", "?", "!", "VOID"]
                                 while True:
                                     print(random.choice(glitch_chars), end=" ", flush=True)
                             except KeyboardInterrupt:
-                                print(YELLOW + "\n\n[SYSTEM]: Стоп-кран удержал ядро. Поток очищен.\n")
+                                print(YELLOW + t["vfs_stop_kran"])
                                 continue
                         elif content == "__TRIGGER_ROOT_CORRUPTION__":
                             self.vfs.is_corrupted = True
                             self.vfs.current_path = "VOID:\\-1"
-                            print(RED + "\n!!! [SYSTEM FAULT] !!!")
-                            print(RED + "Вы провалились ниже корневого уровня. Корнем стал сектор [-1].")
+                            print(RED + t["vfs_root_crash_msg"])
                         else:
                             print(WHITE + f"\n--- Открытие потока: {args} ---")
                             print(WHITE + content)
                             print(WHITE + "--------------------------------\n")
                     else:
-                        print(RED + f"Ошибка: Файл '{args}' не найден.")
+                        print(RED + t["vfs_type_err"].format(filename=args))
             else:
-                print(RED + f"'{command}' не является внутренней или внешней командой...")
+                print(RED + t["gs_cmd_err"].format(cmd=command))
 
 
 class MainMenu:
@@ -309,7 +282,6 @@ class MainMenu:
     def show_help(self):
         clear_screen()
         t = LANG_DATA[CURRENT_LANG]
-        
         print(CYAN + t["h_title"])
         print(WHITE + t["h_welcome"])
         print(YELLOW + t["h_avail"])
@@ -327,10 +299,8 @@ class MainMenu:
     def show_intro(self):
         clear_screen()
         t = LANG_DATA[CURRENT_LANG]
-        
         def p(text_key):
-            raw_text = t[text_key]
-            print(raw_text.format(RED=RED, GREEN=GREEN, CYAN=CYAN, WHITE=WHITE, YELLOW=YELLOW))
+            print(t[text_key].format(RED=RED, GREEN=GREEN, CYAN=CYAN, WHITE=WHITE, YELLOW=YELLOW))
 
         print(CYAN + "════════════════════════════════════════════════════════════════════════════════")
         print(CYAN + t["i_title"])
@@ -366,19 +336,14 @@ class MainMenu:
 
 if __name__ == "__main__":
     import subprocess
-    
     CREATE_NEW_CONSOLE = 0x00000010
-    
     if os.environ.get('TERM_PROGRAM') == 'vscode' and '--detached' not in sys.argv:
         script_path = os.path.abspath(__file__)
-        
         subprocess.Popen([sys.executable, script_path, '--detached'], creationflags=CREATE_NEW_CONSOLE)
-        
         print(GREEN + "\n[LAUNCHER]: Симуляция VOIDER-DOS успешно перенаправлена в отдельное окно.")
         print(CYAN + "[LAUNCHER]: Терминал VS Code свободен для работы.\n")
         sys.exit(0)
 
-    # --- ЧИСТЫЙ ЗАПУСК ИГРЫ ---
     show_alpha_disclaimer()
     menu = MainMenu()
     menu.show()
